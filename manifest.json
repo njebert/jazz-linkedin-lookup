@@ -1,0 +1,11 @@
+{
+  "name": "Jazz Lookup",
+  "description": "Queries the Jazz candidate database for a selected Name.  Shows some of the features of the Context Menus API using an event page",
+  "version": "1.0",
+  "permissions": ["contextMenus"],
+  "background": {
+    "persistent": false,
+    "scripts": ["sample.js"]
+  },
+  "manifest_version": 2
+}
