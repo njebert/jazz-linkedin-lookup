@@ -1,17 +1,25 @@
 {
   "name": "Jazz Lookup",
-  "description": "Queries the Jazz candidate database for a selected Name.  Shows some of the features of the Context Menus API using an event page",
+  "description": "Queries a Jazz candidate database for LinkedIn search results.",
   "version": "1.0",
   "permissions": [
     "contextMenus",
     "tabs",
-    "https://api.resumatorapi.com/"
+    "https://api.resumatorapi.com/",
+    "https://www.linkedin.com/*"
   ],
-  "background": {
-    "persistent": false,
-    "scripts": [
-      "lookup.js"
-    ]
-  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
+      "js": [
+        "jquery-3.2.1.min.js",
+        "fontawesome-all.js",
+        "search_addition.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
   "manifest_version": 2
 }
