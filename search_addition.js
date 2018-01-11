@@ -48,9 +48,6 @@ function processSearchResults() {
                 var resp = JSON.parse(xhr.responseText);
                 if (resp.length > 0) {
                     foundResult.NameSpanReference.after('&nbsp; &nbsp;<i class="fas fa-music"></i>');
-                    //console.log("APPLIED! " + foundResult.Index + ": " + foundResult.Name);
-                } else {
-                    //console.log(foundResult.Index + ": " + foundResult.Name);
                 }
             }
         }
@@ -58,17 +55,17 @@ function processSearchResults() {
     });
 }
 
-//TODO - detect when search results pane changes!
-// Chain it up to do lookups when search results change.
-
 //initial call to process search results
 setTimeout(function () {
     processSearchResults();
 }, 1500);
 
-
-// $(document).on('click', function (event) {
-//     if ($(event.target).is(".next")) {
-//         console.log("Next clicked");
-//     }
-// });
+// binding to "NEXT" and "PREV" clicks in the LinkedIn Search interface
+$(document).on('click', function (event) {
+    if ($(event.target).parent().is(".next") ||
+        $(event.target).parent().is(".prev")) {
+        setTimeout(function () {
+            processSearchResults();
+        }, 2500);
+    }
+});
