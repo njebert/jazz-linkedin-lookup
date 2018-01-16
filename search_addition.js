@@ -2,6 +2,14 @@
 
 var searchResults = [];
 
+var API_KEY = ""; //API KEY REMOVED!
+
+function decorateElement(response, element){
+    if (!$.isEmptyObject(response)) {
+        element.after('&nbsp; &nbsp;<i class="fas fa-music"></i>');
+    }
+}
+
 function processSearchResults() {
     //clear existing search results
     searchResults = [];
@@ -28,7 +36,7 @@ function processSearchResults() {
         var address = "https://api.resumatorapi.com/v1/applicants/name/"
             // url encode the selected text Clayton%20Henderson
             + encodeURI(nameSearchResult)
-            + "?apikey=<API KEY REMOVED>"
+            + "?apikey=" + API_KEY;
 
         xhr.open("GET", address, true);
         xhr.onreadystatechange = function () {
@@ -46,18 +54,58 @@ function processSearchResults() {
 
                 // JSON.parse does not evaluate the attacker's scripts.
                 var resp = JSON.parse(xhr.responseText);
-                if (resp.length > 0) {
-                    foundResult.NameSpanReference.after('&nbsp; &nbsp;<i class="fas fa-music"></i>');
-                }
+                decorateElement(resp, foundResult.NameSpanReference);
             }
         }
         xhr.send();
     });
 }
 
-//initial call to process search results
+function processProfilePage() {
+    $(".pv-top-card-section__name").each(function (index) {
+        var nameHeaderReference = $(this);
+
+        var profileResult = {};
+        profileResult.Name = nameHeaderReference.text();
+
+        //Seaprate Jazz call for profile requests
+        var xhr = new XMLHttpRequest();
+
+        var address = "https://api.resumatorapi.com/v1/applicants/name/"
+            // url encode the selected text Clayton%20Henderson
+            + encodeURI(profileResult.Name)
+            + "?apikey=" + API_KEY;
+
+        console.log("Process Profile Page: " + profileResult.Name);
+        
+        xhr.open("GET", address, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+
+                //Match returned record with saved searchResults
+                var responseURL = xhr.responseURL;
+                //remove first portion of the URL
+                responseURL = responseURL.replace("https://api.resumatorapi.com/v1/applicants/name/", "");
+                //trim to first element of the URL
+                responseURL = responseURL.substring(0, responseURL.indexOf("?"));
+                var responseName = decodeURI(responseURL).trim();
+
+                // JSON.parse does not evaluate the attacker's scripts.
+                var resp = JSON.parse(xhr.responseText);
+                decorateElement(resp, nameHeaderReference);
+            }
+        }
+        xhr.send();
+
+    });
+}
+
+//initial call to process search results or profile results
 setTimeout(function () {
+    //TODO - Detect a search results page to run the correct method on the page.
     processSearchResults();
+    processProfilePage();
+
 }, 1500);
 
 // binding to "NEXT" and "PREV" clicks in the LinkedIn Search interface
@@ -66,6 +114,12 @@ $(document).on('click', function (event) {
         $(event.target).parent().is(".prev")) {
         setTimeout(function () {
             processSearchResults();
+        }, 2500);
+    }
+
+    if($(event.target).is(".actor-name")){
+        setTimeout(function () {
+            processProfilePage();
         }, 2500);
     }
 });
