@@ -10,6 +10,9 @@ function decorateElement(response, element){
     }
 }
 
+// TODO: processSearchResults and processProfilePage - candidate search is too far reaching - returning same named people that applied for different positions. Need to narrow the list of applicable positions. 
+// EXAMPLE: Many "John Smith" candidates are active for many positions. 
+
 function processSearchResults() {
     //clear existing search results
     searchResults = [];
